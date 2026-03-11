@@ -1,8 +1,5 @@
-from distutils.core import setup
-import setuptools
+# This file is kept only for backward compatibility with older pip versions.
+# All configuration has moved to pyproject.toml.
+from setuptools import setup
 
-setup(
-    name='m2ee',
-    package_dir = {'': 'src'},
-    packages=setuptools.find_packages('src'),
-)
+setup()

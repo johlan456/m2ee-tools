@@ -4,9 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "m2ee-tools"
-version = "8.0.1"
+dynamic = ["version"]
 description = "CLI tool for managing Mendix application deployments on GNU/Linux"
-requires-python = ">=3.6"
+license = "BSD-3-Clause"
+requires-python = ">=3.8"
 dependencies = [
     "requests",
     "pyyaml",
@@ -15,8 +16,14 @@ dependencies = [
 [project.optional-dependencies]
 postgresql = ["psycopg2"]
 
+[project.urls]
+Repository = "https://github.com/johlan456/m2ee-tools"
+
 [project.scripts]
 m2ee = "m2ee.cli:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "m2ee.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
