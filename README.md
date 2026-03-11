@@ -1,9 +1,15 @@
 m2ee-tools
 ==========
 
-## ** M2EE-tools only support Debian 10 (buster) and Mendix Runtime versions 7-9. Further version support will not be added anymore. **
+CLI tool for deploying and managing [Mendix](https://www.mendix.com/) applications on GNU/Linux.
 
-m2ee, the Mendix runtime helper tools for GNU/Linux
+This is a maintained fork of the [original m2ee-tools](https://github.com/mendix/m2ee-tools/) by Mendix, which is no longer actively developed.
+
+## Supported Versions
+
+- **Mendix Runtime:** 7, 8, 9 (tested). Version 10+ may work but is not yet verified.
+- **Python:** 3.8+
+- **OS:** Any GNU/Linux distribution
 
 ## Installation
 
@@ -30,9 +36,19 @@ uv venv
 uv pip install -e .
 ```
 
+## Usage
+
+```sh
+m2ee          # Interactive REPL mode
+m2ee -c stop  # Single command (non-interactive)
+```
+
+Configuration is read from `~/.m2ee/m2ee.yaml`. See [examples/](examples/) for reference configurations.
+
 ## Documentation
 
-For further documentation, please refer to [the included documentation](doc/README.md)
+For detailed setup and configuration guides, see the [documentation](doc/README.md).
 
-m2ee-tools on github:
-https://github.com/mendix/m2ee-tools/
+## License
+
+BSD 3-Clause. See [LICENSE](LICENSE).
