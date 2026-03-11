@@ -20,3 +20,15 @@ m2ee = "m2ee.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+src = ["src"]
+target-version = "py38"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = [
+    "E721",  # type comparison — intentional in legacy code
+    "E741",  # ambiguous variable name — legacy code
+]

@@ -151,7 +151,7 @@ def list_installed_runtimes(runtimes_path):
         try:
             MXVersion(item_present)
             found.append(item_present)
-        except:
+        except Exception:
             pass
     return found
 
@@ -170,7 +170,7 @@ def cleanup_runtimes_except(versions, runtimes_path):
         try:
             MXVersion(item_present)
             items_to_remove.append(item_present)
-        except:
+        except Exception:
             logger.warning("Ignoring %s for removal, since it doesn't look like a "
                            "Mendix Runtime version." % item_present)
     for item_to_remove in items_to_remove:
