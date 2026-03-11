@@ -24,10 +24,9 @@ import m2ee
 
 logger = logging
 
-if not sys.stdout.isatty():
-    import codecs
-    import locale
-    sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
+# Python 3's sys.stdout already handles encoding correctly.
+# The original codecs.getwriter() wrapping was needed for Python 2 but breaks
+# Python 3 in non-TTY contexts (e.g. systemd) by writing bytes to a text stream.
 
 
 class CLI(cmd.Cmd, object):

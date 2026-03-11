@@ -4,7 +4,6 @@
 
 import logging
 import os
-import codecs
 import time
 import copy
 
@@ -219,7 +218,7 @@ class M2EE():
                                        "%s_database_commands.sql" %
                                        time.strftime("%Y%m%d_%H%M%S"))
         logger.info("Saving DDL commands to %s" % query_file_name)
-        with codecs.open(query_file_name, mode='w', encoding='utf-8') as f:
+        with open(query_file_name, mode='w', encoding='utf-8') as f:
             f.write('\n'.join(ddl_commands))
 
     def unpack(self, mda_name):
