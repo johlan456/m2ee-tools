@@ -5,8 +5,10 @@ CLI tool for managing Mendix application deployments on GNU/Linux. Written in Py
 ## Project Structure
 
 ```
-src/m2ee.py          # Main CLI entry point (cmd.Cmd-based interactive shell)
+pyproject.toml       # Project metadata, dependencies, and entry point
+src/m2ee.py          # Legacy CLI script (kept for backward compatibility)
 src/m2ee/            # Core library package
+  cli.py             # CLI entry point (cmd.Cmd-based interactive shell)
   core.py            # M2EE class - runtime lifecycle management
   config.py          # YAML configuration parsing/validation
   client.py          # HTTP client for Mendix Admin API (JSON-RPC)
@@ -28,14 +30,23 @@ munin/               # Munin plugin script
 
 - **Python 3 only** (Python 2 dropped in v8.0)
 - **Dependencies:** `requests`, `pyyaml`, `psycopg2` (optional, for PostgreSQL)
-- **Packaging:** `setup.py` with setuptools
+- **Packaging:** `pyproject.toml` with setuptools (migrated from legacy `setup.py`)
 - **No test suite** currently in place
 
 ### Install for development
 
 ```sh
+uv venv
 uv pip install -e .
 ```
+
+### Install for production
+
+```sh
+pip install .
+```
+
+This installs the `m2ee` library and creates the `m2ee` CLI command automatically.
 
 ### Run
 
@@ -68,7 +79,8 @@ m2ee -c stop  # Single command (non-interactive)
 
 ## Gotchas
 
-- `setup.py` uses deprecated `distutils.core` — may need migration to pure setuptools for Python 3.12+
+- Legacy `setup.py` still exists for backward compatibility but is deprecated — use `pip install .` with `pyproject.toml` for new deployments
+- `src/m2ee.py` is the legacy standalone script — some older deployments copied this directly to `/usr/local/bin/m2ee`. New deployments should use `pip install .` which creates the entry point automatically via `src/m2ee/cli.py`
 - Always use `yaml.safe_load()`, never `yaml.load()` — security requirement
 - Non-TTY stdout (e.g. systemd): Python 3 handles encoding natively, do not wrap with `codecs.getwriter()`
 - Version string lives in `src/m2ee/__init__.py` (`__version__`)
