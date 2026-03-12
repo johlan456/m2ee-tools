@@ -2,6 +2,9 @@
 #
 # Copyright (C) 2009 Mendix. All rights reserved.
 #
+# This module contains the CLI code that lived in src/m2ee.py in the upstream
+# project. It was moved here as src/m2ee/cli.py during the migration to
+# pyproject.toml so it can be registered as a console_scripts entry point.
 
 import argparse
 import atexit
