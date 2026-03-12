@@ -88,7 +88,9 @@ mxruntime:
 
 See [examples/full-documented-m2ee.yaml](examples/full-documented-m2ee.yaml) for all available options.
 
-### 3. Create the systemd service
+### 3. Configure the service manager
+
+#### systemd
 
 Create `/etc/systemd/system/mendix-myapp.service`:
 
@@ -115,6 +117,59 @@ Enable and start:
 ```sh
 sudo systemctl daemon-reload
 sudo systemctl enable --now mendix-myapp
+```
+
+#### Supervisor (non-systemd systems)
+
+Supervisor expects a foreground process, so a small wrapper is needed to start m2ee and then monitor the JVM via its PID file.
+
+Create `/home/myapp/bin/mendix-supervisor-wrapper.sh`:
+
+```sh
+sudo -u myapp mkdir -p /home/myapp/bin
+sudo nano /home/myapp/bin/mendix-supervisor-wrapper.sh
+```
+
+```bash
+#!/bin/bash
+/home/myapp/.local/bin/m2ee -c start
+
+# Wait for the PID file to appear
+timeout=30
+while [ ! -f /home/myapp/.m2ee/m2ee.pid ] && [ $timeout -gt 0 ]; do
+    sleep 1
+    ((timeout--))
+done
+
+# Stay alive as long as the JVM process is running
+while kill -0 "$(cat /home/myapp/.m2ee/m2ee.pid 2>/dev/null)" 2>/dev/null; do
+    sleep 5
+done
+```
+
+```sh
+sudo chmod +x /home/myapp/bin/mendix-supervisor-wrapper.sh
+```
+
+Create `/etc/supervisor/conf.d/mendix-myapp.conf`:
+
+```ini
+[program:mendix-myapp]
+command=/home/myapp/bin/mendix-supervisor-wrapper.sh
+user=myapp
+autostart=true
+autorestart=true
+startretries=3
+stopsignal=TERM
+stopasgroup=true
+```
+
+Enable and start:
+
+```sh
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start mendix-myapp
 ```
 
 ## First-time Deployment
