@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 #
 # Legacy standalone script - kept for backward compatibility.
-# New deployments should use: pip install . (or uv pip install .)
-# which creates the 'm2ee' command via the entry point in pyproject.toml.
+# New deployments should use: uv tool install git+https://github.com/johlan456/m2ee-tools
+# which creates the 'm2ee' command automatically.
 #
 # This script simply delegates to m2ee.cli:main().
 #
