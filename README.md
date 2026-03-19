@@ -63,6 +63,7 @@ m2ee:
   admin_port: 9000
   admin_pass: <long random string, not used manually>
   runtime_port: 8080
+  javabin: /usr/bin/java
   javaopts:
     - "-Dfile.encoding=UTF-8"
     - "-Xmx512M"
@@ -85,6 +86,8 @@ mxruntime:
   DatabaseUserName: myapp
   DatabasePassword: <password>
 ```
+
+**Important:** `javabin` must be set to the absolute path of your Java binary (e.g. `/usr/bin/java`). Because `uv tool install` runs m2ee in an isolated environment that does not inherit the system PATH, omitting this will cause the JVM to fail to start.
 
 See [examples/full-documented-m2ee.yaml](examples/full-documented-m2ee.yaml) for all available options.
 

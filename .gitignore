@@ -29,3 +29,6 @@ pip-log.txt
 .mr.developer.cfg
 
 *.swp
+
+# Local migration plans
+MIGRATION-PLAN-*.md
