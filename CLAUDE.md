@@ -51,8 +51,10 @@ This installs the `m2ee` library and creates the `m2ee` CLI command automaticall
 ### Run
 
 ```sh
-m2ee          # Interactive REPL mode
-m2ee -c stop  # Single command (non-interactive)
+m2ee                      # Interactive REPL mode
+m2ee stop                 # Single command — commands are POSITIONAL args
+m2ee -y stop              # ...auto-answering confirmation prompts
+m2ee -c /path/m2ee.yaml   # -c specifies a CONFIG FILE (repeatable), not a command
 ```
 
 ## Code Conventions
@@ -84,3 +86,10 @@ m2ee -c stop  # Single command (non-interactive)
 - Always use `yaml.safe_load()`, never `yaml.load()` — security requirement
 - Non-TTY stdout (e.g. systemd): Python 3 handles encoding natively, do not wrap with `codecs.getwriter()`
 - Version string lives in `src/m2ee/__init__.py` (`__version__`)
+- `-c` is the **config file** flag (`dest="yaml_files"`), not a command selector —
+  commands are positional (`onecmd`). `m2ee -c start` treats `start` as a YAML path
+  and, since `-c` replaces the default config lookup, exits with
+  `CRITICAL: No configuration present` instead of starting the app
+- `unpack`, `start`, `stop` and others `input()` for confirmation, so they raise
+  `EOFError` under systemd/cron; `-y`/`--yolo` auto-answers, which also means it
+  auto-executes DDL, regenerates a default `1` admin password, and kills the JVM

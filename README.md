@@ -106,8 +106,8 @@ After=network.target postgresql.service
 Type=forking
 User=myapp
 WorkingDirectory=/home/myapp
-ExecStart=/home/myapp/.local/bin/m2ee -c start
-ExecStop=/home/myapp/.local/bin/m2ee -c stop
+ExecStart=/home/myapp/.local/bin/m2ee -y start
+ExecStop=/home/myapp/.local/bin/m2ee -y stop
 PIDFile=/home/myapp/.m2ee/m2ee.pid
 Restart=on-failure
 
@@ -135,7 +135,7 @@ sudo nano /home/myapp/bin/mendix-supervisor-wrapper.sh
 
 ```bash
 #!/bin/bash
-/home/myapp/.local/bin/m2ee -c start
+/home/myapp/.local/bin/m2ee -y start
 
 # Wait for the PID file to appear
 timeout=30
@@ -194,6 +194,35 @@ m2ee(myapp): start
 m2ee(myapp): create_admin_user
 ```
 
+## Non-interactive Use
+
+Commands are **positional arguments**, not values passed to a flag:
+
+```sh
+m2ee                      # interactive REPL
+m2ee start                # run one command and exit
+m2ee -c /path/m2ee.yaml   # -c specifies a CONFIG FILE (repeatable), not a command
+```
+
+`-c` is the config-file option. `m2ee -c start` does *not* run `start` — it treats
+`start` as a path to a YAML config file. Because `-c` also replaces the default
+`~/.m2ee/m2ee.yaml` lookup, you get a warning about the unreadable file followed by
+`CRITICAL: No configuration present`, and the app is never started.
+
+Several commands prompt for confirmation on stdin and will fail with `EOFError` when
+run from a service manager, cron, or a script. Use `-y` (`--yolo`) to auto-answer
+those prompts. Be aware of what it agrees to on your behalf:
+
+- **executes DDL** against the database when the schema does not match the model
+  (including creating the schema in an empty database)
+- **replaces `model/` and `web/`** without asking, on `unpack`
+- **regenerates the administrator password** if the model ships the default `1`,
+  writing a new random password to the database and printing it to the log
+- **signals and then kills the JVM** if it does not shut down cleanly, on `stop`
+
+For unattended deployments that is usually what you want, but do not use `-y`
+against a database whose contents you care about without a backup.
+
 ## Common Commands
 
 | Command | Description |
@@ -201,8 +230,8 @@ m2ee(myapp): create_admin_user
 | `sudo -u myapp m2ee` | Open interactive shell |
 | `sudo systemctl status mendix-myapp` | Check service status |
 | `sudo systemctl restart mendix-myapp` | Restart the application |
-| `sudo -u myapp m2ee -c backup_db` | Dump the database |
-| `sudo -u myapp m2ee -c unpack <file>` | Deploy a new MDA archive |
+| `sudo -u myapp m2ee backup_db` | Dump the database (PostgreSQL only) |
+| `sudo -u myapp m2ee -y unpack <file>` | Deploy a new MDA archive |
 
 ## Documentation
 
